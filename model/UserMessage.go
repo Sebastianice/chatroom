@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-type UserMapMessage struct {
+type UserMessage struct {
 	Id uint `gorm:"primarykey"`
 
 	UserId uint

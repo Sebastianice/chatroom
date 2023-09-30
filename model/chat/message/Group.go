@@ -1,11 +1,11 @@
-package model
+package response
 
 import "chatroom/global"
 
 type Group struct {
 	global.GVA_MODEL
-
-	UserId    uint `gorm:"userId" json:"userId"`
+	UserId    uint // 群主id
 	GroupName string
 	Notice    string
+	messages  []GroupMessage
 }

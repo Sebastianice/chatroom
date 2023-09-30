@@ -2,12 +2,12 @@ package response
 
 import "time"
 
-type UserMap struct {
+type User struct {
 	UserId     uint
 	Username   string
 	Avatar     string
 	Role       string
 	Tag        string
-	Messages   []UserMapMessage
+	Messages   []UserMessage
 	CreateTime time.Time
 }

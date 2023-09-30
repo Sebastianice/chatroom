@@ -2,7 +2,7 @@ package response
 
 import "time"
 
-type UserMapMessage struct {
+type UserMessage struct {
 	UserId      uint
 	FriendId    uint
 	Content     string
