@@ -1,4 +1,4 @@
-package response
+package message
 
 import "chatroom/global"
 
@@ -7,5 +7,5 @@ type Group struct {
 	UserId    uint // 群主id
 	GroupName string
 	Notice    string
-	messages  []GroupMessage
+	Messages  []GroupMessage
 }

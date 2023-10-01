@@ -1,7 +1,8 @@
 package internal
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"chatroom/global"
+	"chatroom/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"time"
@@ -12,7 +13,6 @@ var Zap = new(_zap)
 type _zap struct{}
 
 // GetEncoder 获取 zapcore.Encoder
-// Author [SliverHorn](https://github.com/SliverHorn)
 func (z *_zap) GetEncoder() zapcore.Encoder {
 	if global.GVA_CONFIG.Zap.Format == "json" {
 		return zapcore.NewJSONEncoder(z.GetEncoderConfig())
@@ -21,9 +21,10 @@ func (z *_zap) GetEncoder() zapcore.Encoder {
 }
 
 // GetEncoderConfig 获取zapcore.EncoderConfig
-// Author [SliverHorn](https://github.com/SliverHorn)
 func (z *_zap) GetEncoderConfig() zapcore.EncoderConfig {
-	return zapcore.EncoderConfig{
+
+	//默认配置
+	config := zapcore.EncoderConfig{
 		MessageKey:     "message",
 		LevelKey:       "level",
 		TimeKey:        "time",
@@ -31,28 +32,42 @@ func (z *_zap) GetEncoderConfig() zapcore.EncoderConfig {
 		CallerKey:      "caller",
 		StacktraceKey:  global.GVA_CONFIG.Zap.StacktraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    global.GVA_CONFIG.Zap.ZapEncodeLevel(),
+		EncodeLevel:    zapcore.LowercaseLevelEncoder,
 		EncodeTime:     z.CustomTimeEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.FullCallerEncoder,
 	}
+	switch {
+	case global.GVA_CONFIG.Zap.EncodeLevel == "LowercaseLevelEncoder": // 小写编码器(默认)
+		config.EncodeLevel = zapcore.LowercaseLevelEncoder
+	case global.GVA_CONFIG.Zap.EncodeLevel == "LowercaseColorLevelEncoder": // 小写编码器带颜色
+		config.EncodeLevel = zapcore.LowercaseColorLevelEncoder
+	case global.GVA_CONFIG.Zap.EncodeLevel == "CapitalLevelEncoder": // 大写编码器
+		config.EncodeLevel = zapcore.CapitalLevelEncoder
+	case global.GVA_CONFIG.Zap.EncodeLevel == "CapitalColorLevelEncoder": // 大写编码器带颜色
+		config.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	default:
+		config.EncodeLevel = zapcore.LowercaseLevelEncoder
+	}
+
+	return config
 }
 
 // GetEncoderCore 获取Encoder的 zapcore.Core
-// Author [SliverHorn](https://github.com/SliverHorn)
+
 func (z *_zap) GetEncoderCore(l zapcore.Level, level zap.LevelEnablerFunc) zapcore.Core {
-	writer := FileRotatelogs.GetWriteSyncer(l.String()) // 日志分割
+	writer := utils.GetWriteSyncer(l.String()) // 日志分割
 	return zapcore.NewCore(z.GetEncoder(), writer, level)
 }
 
 // CustomTimeEncoder 自定义日志输出时间格式
-// Author [SliverHorn](https://github.com/SliverHorn)
+
 func (z *_zap) CustomTimeEncoder(t time.Time, encoder zapcore.PrimitiveArrayEncoder) {
 	encoder.AppendString(global.GVA_CONFIG.Zap.Prefix + t.Format("2006/01/02 - 15:04:05.000"))
 }
 
 // GetZapCores 根据配置文件的Level获取 []zapcore.Core
-// Author [SliverHorn](https://github.com/SliverHorn)
+
 func (z *_zap) GetZapCores() []zapcore.Core {
 	cores := make([]zapcore.Core, 0, 7)
 	for level := global.GVA_CONFIG.Zap.TransportLevel(); level <= zapcore.FatalLevel; level++ {
@@ -62,7 +77,7 @@ func (z *_zap) GetZapCores() []zapcore.Core {
 }
 
 // GetLevelPriority 根据 zapcore.Level 获取 zap.LevelEnablerFunc
-// Author [SliverHorn](https://github.com/SliverHorn)
+
 func (z *_zap) GetLevelPriority(level zapcore.Level) zap.LevelEnablerFunc {
 	switch level {
 	case zapcore.DebugLevel:

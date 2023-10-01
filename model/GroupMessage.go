@@ -5,13 +5,17 @@ import "time"
 type GroupMessage struct {
 	Id uint `gorm:"primarykey"`
 
-	UserId uint
+	UserId uint `gorm:"userId" json:"userId"`
 
-	groupId uint
+	GroupId uint `gorm:"groupId" json:"groupId"`
 
-	content string
+	Content string `gorm:"content" json:"content"`
 
-	messageType string
+	MessageType string `gorm:"messageType" json:"messageType"`
 
-	SendTime time.Time
+	SendTime time.Time `gorm:"sendTime" json:"time"`
+}
+
+func (u GroupMessage) TableName() string {
+	return "chat_group_message"
 }

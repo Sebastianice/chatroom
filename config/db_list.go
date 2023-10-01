@@ -23,10 +23,3 @@ type GeneralDB struct {
 	Singular     bool   `mapstructure:"singular" json:"singular" yaml:"singular"`                   //是否开启全局禁用复数，true表示开启
 	LogZap       bool   `mapstructure:"log-zap" json:"log-zap" yaml:"log-zap"`                      // 是否通过zap写入日志文件
 }
-
-type SpecializedDB struct {
-	Type      string `mapstructure:"type" json:"type" yaml:"type"`
-	AliasName string `mapstructure:"alias-name" json:"alias-name" yaml:"alias-name"`
-	GeneralDB `yaml:",inline" mapstructure:",squash"`
-	Disable   bool `mapstructure:"disable" json:"disable" yaml:"disable"`
-}

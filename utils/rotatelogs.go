@@ -1,9 +1,10 @@
 package utils
 
 import (
+	"chatroom/global"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap/zapcore"
-	"main.go/global"
+
 	"os"
 )
 
